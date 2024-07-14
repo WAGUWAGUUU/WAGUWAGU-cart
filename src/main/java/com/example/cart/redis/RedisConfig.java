@@ -21,7 +21,8 @@ public class RedisConfig {
         template.setConnectionFactory(redisConnectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new Jackson2JsonRedisSerializer<>(CartDTO.class));
-
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(CartDTO.class));
         return template;
     }
 }
