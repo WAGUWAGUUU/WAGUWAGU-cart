@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +15,8 @@ public class MenuItemDTO implements Serializable {
     private String menuName;
     private int menuPrice;
     private int quantity;
-//    private List<OptionsDto> optionsDto;
+
+
 
 
 

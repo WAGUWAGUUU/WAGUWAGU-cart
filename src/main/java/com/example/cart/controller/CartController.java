@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("api/v1/cart")
 public class CartController {
     private final CartServiceImpl cartService;
+
+
     @PostMapping("/save")
     @ResponseStatus(HttpStatus.CREATED)
     public void saveCart(@RequestBody CartDTO cart) throws JsonProcessingException {
@@ -18,13 +21,14 @@ public class CartController {
     }
 
     @GetMapping("/{userId}")
-    public CartDTO getCart(@PathVariable String userId) throws JsonProcessingException {
+    public CartDTO getCart(@PathVariable Long userId) throws JsonProcessingException {
         return cartService.getCart(userId);
     }
 
     @DeleteMapping("/clear/{userId}")
-    public void clearCart(@PathVariable String userId) {
+    public void clearCart(@PathVariable Long userId) {
         cartService.clearCart(userId);
     }
+
 
 }

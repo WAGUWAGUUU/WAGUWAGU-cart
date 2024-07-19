@@ -1,21 +1,30 @@
 package com.example.cart.service;
 
+import com.example.cart.dto.CartDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
 public class RedisService {
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<Long, CartDTO> redisTemplate;
 
-    public void save(UUID key, String value) {
-        redisTemplate.opsForValue().set(key.toString(), value);
+    public void save(Long key, CartDTO value) {
+        redisTemplate.opsForValue().set(key, value);
     }
 
-    public String find(UUID key) {
-        return redisTemplate.opsForValue().get(key.toString());
+    public CartDTO find(Long key) {
+        return redisTemplate.opsForValue().get(key);
     }
+
+    public void delete (Long key) {
+        redisTemplate.delete(key);
+    }
+
+
+
+
 }

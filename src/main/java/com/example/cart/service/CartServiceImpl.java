@@ -2,10 +2,14 @@ package com.example.cart.service;
 
 
 import com.example.cart.dto.CartDTO;
+import com.example.cart.kafka.dto.KafkaCartDTO;
+import com.example.cart.kafka.dto.KafkaStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -13,36 +17,46 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl  {
-    @Autowired
-    private RedisService redisService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final RedisService redisService;
+
+
+    private final ObjectMapper objectMapper;
 
     public void saveCart(CartDTO cart) throws JsonProcessingException {
-        String userId = cart.getUserId();
+        Long userId = cart.getUserId();
         if (userId == null) {
-            throw new IllegalArgumentException("Cart userId cannot be null");
+            throw new IllegalArgumentException("Cart USER_Id cannot be null");
         }
 
-        String cartJson = objectMapper.writeValueAsString(cart);
-        UUID key = UUID.fromString(userId);
-        redisService.save(key, cartJson);
+        redisService.save(userId, cart);
     }
-    public CartDTO getCart(String userId) throws JsonProcessingException {
-        UUID key = UUID.fromString(userId);
-        String cartJson = redisService.find(key);
+    public CartDTO getCart(Long userId) throws JsonProcessingException {
+     return   redisService.find(userId);
 
-        if (cartJson != null) {
-            return objectMapper.readValue(cartJson, CartDTO.class);
-        } else {
-            return null;
-        }
     }
 
-    public void clearCart(String userId) {
-        UUID key = UUID.fromString(userId);
-        redisService.save(key, null);
+    public void clearCart(Long userId) {
+        redisService.save(userId, null);
+
+
+
+
+
     }
+
+
+    @KafkaListener(topics ="order-topic")
+    public void kafkaCart(KafkaStatus<KafkaCartDTO> msg) {
+
+        if(msg.status().equals("create")) redisService.delete(msg.data().customerId());
+        System.out.println(msg.data().customerId() );
+        System.out.println("Cart deleted");
+
+    }
+
+
+
+
 
 }
