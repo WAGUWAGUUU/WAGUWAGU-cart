@@ -11,10 +11,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MenuItemDTO implements Serializable {
+
     private Long menuId;
     private String menuName;
-    private int menuPrice;
+    private int totalPrice;
     private int quantity;
+    private List<OptionListDTO> selectedOptions;
+
 
 
 
